@@ -4,6 +4,7 @@ const { type } = require('os')
 const app = new express()
 const PORT = 3001
 const path = require('path')
+const morgan = require('morgan')
 
 let phonebook = [
     { 
@@ -32,8 +33,25 @@ let phonebook = [
 app.use(express.json())
 
 
+
+
+// app.use(morgan('tiny'))
+morgan.token('person', function (req, res) {
+  let name = req.body.name
+  let number = req.body.number
+  console.log(req.body.number)
+
+   return JSON.stringify({name, 
+          number
+  })
+  
+  })
+app.use(morgan(':method :url :response-time :person'))
+
+
+
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html')
+    res.sendFile(__dirname + '/index.html') 
 })
 
 app.get('/info', (req, res) => {
@@ -88,8 +106,10 @@ app.post('/api/persons', (req, res) => {
     }
 
 
-    console.log(person)
+    // console.log(person)
     phonebook.push(person)
+
+
 
     res.json(phonebook)
 })
