@@ -37,18 +37,23 @@ app.use(express.json())
 
 // app.use(morgan('tiny'))
 morgan.token('person', function (req, res) {
+  
   let name = req.body.name
   let number = req.body.number
-  console.log(req.body.number)
+  // console.log(req.body.number)
 
    return JSON.stringify({name, 
           number
   })
   
   })
-app.use(morgan(':method :url :response-time :person'))
+app.use(morgan(':method :url :response-time :person', {
+  skip: function (req, res) { return req.method !== "POST" }
+}))
 
-
+app.use(morgan('tiny', {
+  skip: function (req, res) { return req.method === "POST" }
+}))
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html') 
@@ -84,7 +89,7 @@ app.post('/api/persons', (req, res) => {
         }) 
       }
 
-
+      
     const id = Math.floor(Math.random() * 100000)
     const name = content.name
     const number = content.name
@@ -108,7 +113,6 @@ app.post('/api/persons', (req, res) => {
 
     // console.log(person)
     phonebook.push(person)
-
 
 
     res.json(phonebook)
